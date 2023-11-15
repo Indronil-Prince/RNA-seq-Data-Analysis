@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.433">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>CS 509 - Project 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="CS509_Project2_files/libs/clipboard/clipboard.min.js"></script>
+<script src="CS509_Project2_files/libs/quarto-html/quarto.js"></script>
+<script src="CS509_Project2_files/libs/quarto-html/popper.min.js"></script>
+<script src="CS509_Project2_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="CS509_Project2_files/libs/quarto-html/anchor.min.js"></script>
+<link href="CS509_Project2_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="CS509_Project2_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="CS509_Project2_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="CS509_Project2_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="CS509_Project2_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">CS 509 - Project 2</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="differential-gene-expression-in-the-heart-of-the-house-mouse-based-on-age-and-sex" class="level1">
+<h1>Differential Gene Expression in the Heart of the House Mouse Based on Age and Sex</h1>
+<section id="indronil-bhattacharjee-ib-and-erica-flores-ef" class="level4">
+<h4 class="anchored" data-anchor-id="indronil-bhattacharjee-ib-and-erica-flores-ef">Indronil Bhattacharjee (IB) and Erica Flores (EF)</h4>
+</section>
+<section id="abstract" class="level2">
+<h2 class="anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Sexual dimorphism is a well-known phenomenon inherent to biological systems, processes beyond those involved in sexual reproduction. Due to the distribution of different chromosomes between the sexes, there is a fundamental difference in the genetic makeup that extends to differences in signal transduction and regulation. Furthermore, this leads to overall changes in biological processes, including those of disease progression and aging. Here, we explore questions about differential gene expression in the aging heart of mice, including both males and females. We utilize a public data set of RNA-seq reads from a published project, in order to confirm the results of the authors, as well as become familiar with bioinformatics work flows. We found that our overall results concur with the author, there are clear differences in aging between males and females, and there is in fact an interaction between age and sex. Many of the top aging genes that differed between the sexes are involved in immune function and homeostasis. This study highlights the importance of experimental design, particularly in disease research where the goal is to find a treatment that works for as many people as possible. Understanding the fundamental biology of the model system is critical to correctly interpreting the results and</p>
+</section>
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>Bioinformatics has revolutionized the progression of biological research, allowing us to compare entire transcriptomes of specific tissues across varying conditions. In terms of experimental design, it is critical to account for all of the biological variables that can affect gene expression, including those naturally present in model organisms.</p>
+<p>One particular variable that is prevalent in biological models is sex, as the sex chromosomes differ between males (XY) and females (XX) in mammals. When considering any research questions that involve a living model, we must consider that sex could have an effect on our results due to the differences in the underlying genome.</p>
+<p>In terms of aging and disease, it has been shown previously that there is a clear sex bias, where women typically have higher longevity than men and tend to develop different aging-related diseases (Tower et al 2017).</p>
+<p>According to the National Center for Health Statistics, “Heart disease is the <strong>leading cause of death</strong> for men, women, and people of most racial and ethnic groups in the United States.” (NCHS 2018-2021). In this project, we utilize a publicly available transcriptome data set to explore the effects of aging and sex on gene expression in the heart of mice( <em>Mus musculus</em>): NIH BioProject&nbsp;<a href="https://www.ncbi.nlm.nih.gov/bioproject/PRJNA835826">PRJNA835826</a> “Effects of age and sex on gene expression in the mouse heart (house mouse)”. Later, we compare our analysis to the paper published by the Han research group(Han et al 2022). 12 RNA-seq samples were used for analysis, comprised of four groups that cover the variables of age (4 months and 20 months) and sex (M and F), which are summarized in the table below (Table 1).</p>
+<table class="table">
+<caption><strong>Mouse Heart Sample Key</strong></caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Sex</th>
+<th style="text-align: center;">Age (months)</th>
+<th style="text-align: center;">Replicate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">SRR19123213</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123214</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRR19123215</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123216</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRR19123217</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123218</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">20</td>
+<td style="text-align: center;">R1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRR19123219</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R3</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123220</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRR19123221</td>
+<td style="text-align: center;">M</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R1</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123222</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">SRR19123223</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R2</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">SRR19123224</td>
+<td style="text-align: center;">F</td>
+<td style="text-align: center;">4</td>
+<td style="text-align: center;">R1</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="task-1.-download-data-transcriptome-assembly" class="level3">
+<h3 class="anchored" data-anchor-id="task-1.-download-data-transcriptome-assembly">Task 1. Download Data &amp; Transcriptome Assembly</h3>
+<p>The initial steps of this project were accomplished via the command line using Linux. First, the SRA toolkit was used to download the fastq sequence data from the experiment from NCBI GEO. STAR was then used to build an index from the mouse genome and annotation files to generate the BAM and junction files. HTseq was then used to obtain the raw read counts for each annotated gene. We have included the code in the ’<strong>Methods’</strong> section.</p>
+</section>
+<section id="task-2.-pca-plot-on-raw-read-counts" class="level3">
+<h3 class="anchored" data-anchor-id="task-2.-pca-plot-on-raw-read-counts">Task 2. PCA Plot on Raw Read Counts</h3>
+<p>Raw read count files generated from HTseq were read into R Studio, and a count matrix for each gene in the sequencing data was generated. A principal component analysis (PCA) plot summarizing the similarity between the samples was created.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install DESeq2 (if not already installed)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({ <span class="fu">suppressMessages</span>({</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"DESeq2"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">requireNamespace</span>(<span class="st">"BiocManager"</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(<span class="st">"BiocManager"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  BiocManager<span class="sc">::</span><span class="fu">install</span>(<span class="st">"DESeq2"</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})})</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sample <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>size <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a list of filenames for your raw read count files</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>file_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"raw_read_counts_SRR19123213.txt"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123214.txt"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123215.txt"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123216.txt"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123217.txt"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123218.txt"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123219.txt"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123220.txt"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123221.txt"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123222.txt"</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123223.txt"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="st">"raw_read_counts_SRR19123224.txt"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize an empty data frame to store read counts</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>raw_count_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Loop through the files and read the data, excluding the last 5 rows</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (file <span class="cf">in</span> file_names) {</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">read.table</span>(file, <span class="at">sep =</span> <span class="st">"</span><span class="sc">\t</span><span class="st">"</span>, <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Gene"</span>, file), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  data <span class="ot">&lt;-</span> <span class="fu">head</span>(data, <span class="sc">-</span><span class="dv">5</span>) <span class="co"># Exclude the last 5 rows</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename the file column to have a consistent name for joining</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  col_name <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">".txt"</span>,<span class="st">""</span>,<span class="fu">gsub</span>(<span class="st">"raw_read_counts_"</span>, <span class="st">""</span>, file))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  sample <span class="ot">&lt;-</span> <span class="fu">c</span>(sample,col_name)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">colnames</span>(data)[<span class="dv">2</span>] <span class="ot">&lt;-</span> col_name</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  size <span class="ot">&lt;-</span> <span class="fu">c</span>(size, <span class="fu">sum</span>(data[, <span class="dv">2</span>]))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">nrow</span>(raw_count_data) <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If raw_count_data is empty, assign the data to it</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    raw_count_data <span class="ot">&lt;-</span> data</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Otherwise, left join the data with raw_count_data</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    raw_count_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(raw_count_data, data, <span class="at">by =</span> <span class="st">"Gene"</span>)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the "Gene" column as it's not needed for PCA</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>raw_count_data0 <span class="ot">&lt;-</span> raw_count_data</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>raw_count_data <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">select</span>(raw_count_data, <span class="sc">-</span>Gene)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Standardize the data if necessary (centering and scaling)</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>raw_count_data <span class="ot">&lt;-</span> <span class="fu">scale</span>(raw_count_data)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>raw_count_data <span class="ot">&lt;-</span> <span class="fu">t</span>(raw_count_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The following PCA plots display three covariates (sex, age, and library size) for raw and normalized read counts. The size of each point represents the library size, color indicates the age (blue = 4 months and red = 20 months), and sex is indicated by shape (circle = female and triangle = male).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({ <span class="fu">suppressMessages</span>({</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>pca_result <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(raw_count_data, <span class="at">scale =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame with PCA results and sample information</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pca_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">PC1 =</span> pca_result<span class="sc">$</span>x[, <span class="dv">1</span>], <span class="at">PC2 =</span> pca_result<span class="sc">$</span>x[, <span class="dv">2</span>])</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample information (replace with your actual data)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>sample_info <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sample =</span> sample,  <span class="co"># Sample names</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Age =</span> <span class="fu">c</span>( <span class="st">"20months"</span>, <span class="st">"20months"</span>, <span class="st">"20months"</span>, <span class="st">"20months"</span>, <span class="st">"20months"</span>, <span class="st">"20months"</span>,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>           <span class="st">"4months"</span>, <span class="st">"4months"</span>, <span class="st">"4months"</span>, <span class="st">"4months"</span>, <span class="st">"4months"</span>, <span class="st">"4months"</span>),  <span class="co"># Age information</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Sex =</span> <span class="fu">c</span>(<span class="st">"Male"</span>, <span class="st">"Male"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span>, <span class="st">"Female"</span>, <span class="st">"Female"</span>,</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>          <span class="st">"Male"</span>, <span class="st">"Male"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span>, <span class="st">"Female"</span>, <span class="st">"Female"</span>),  <span class="co"># Sex information</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">LibrarySize =</span> size  <span class="co"># Library size information</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine PCA results with sample information</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>pca_data <span class="ot">&lt;-</span> <span class="fu">cbind</span>(pca_data, sample_info)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the variance explained by each principal component</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>variance <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(pca_result<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>), <span class="dv">2</span>)</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a PCA plot</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>pca_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pca_data, <span class="fu">aes</span>(<span class="at">x =</span> PC1, <span class="at">y =</span> PC2, <span class="at">color =</span> Age, <span class="at">shape =</span> Sex, <span class="at">size =</span> LibrarySize)) <span class="sc">+</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"4months"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"20months"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="dv">16</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="dv">17</span>)) <span class="sc">+</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PCA Plot of Raw Read Count Data"</span>, </span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste</span>(<span class="st">"PC1 (Variance:"</span>, variance[<span class="dv">1</span>], <span class="st">"%)"</span>), </span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste</span>(<span class="st">"PC2 (Variance:"</span>, variance[<span class="dv">2</span>], <span class="st">"%)"</span>))</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PCA plot</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pca_plot)</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>})})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>If we look along the PC1 axis, which accounts for 86.64% of the variance, we see that the main effect is due to sex. The majority of the male samples grouped together near the midline and negative quadrant and the female samples are more skewed to the left. Looking along the PC2 axis, which accounts for 3.75% of the variance, there is a slight effect of library size. Some of the larger libraries are grouped towards the negative axis and the more middle size libraries are near the positive axis. Overall, the male samples seem to be less variable than the female samples.</p>
+</section>
+<section id="task-3.-pca-plot-on-normalized-counts" class="level3">
+<h3 class="anchored" data-anchor-id="task-3.-pca-plot-on-normalized-counts">Task 3. PCA Plot on Normalized Counts</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({ <span class="fu">suppressMessages</span>({</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DESeq2)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a DESeqDataSet</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeqDataSetFromMatrix</span>(<span class="at">countData =</span> dplyr<span class="sc">::</span><span class="fu">select</span>(raw_count_data0, <span class="sc">-</span>Gene), <span class="at">colData =</span> sample_info, <span class="at">design =</span> <span class="sc">~</span> Age <span class="sc">+</span> Sex)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Normalize the data by library size</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the normalized count data</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>normalized_counts <span class="ot">&lt;-</span> <span class="fu">counts</span>(dds, <span class="at">normalized =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform PCA on the normalized data</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>pca_result_normalized <span class="ot">&lt;-</span> <span class="fu">prcomp</span>(<span class="fu">t</span>(normalized_counts), <span class="at">scale. =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame with PCA results and sample information</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>pca_data_normalized <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">PC1 =</span> pca_result_normalized<span class="sc">$</span>x[, <span class="dv">1</span>], <span class="at">PC2 =</span> pca_result_normalized<span class="sc">$</span>x[, <span class="dv">2</span>])</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine PCA results with sample information</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>pca_data_normalized <span class="ot">&lt;-</span> <span class="fu">cbind</span>(pca_data_normalized, sample_info)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the variance explained by each principal component</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>variance_explained <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> pca_result_normalized<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> <span class="fu">sum</span>(pca_result_normalized<span class="sc">$</span>sdev<span class="sc">^</span><span class="dv">2</span>), <span class="dv">2</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a PCA plot for the library-size normalized data with variance in axis labels</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>pca_plot_normalized <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pca_data_normalized, <span class="fu">aes</span>(<span class="at">x =</span> PC1, <span class="at">y =</span> PC2, <span class="at">color =</span> Age, <span class="at">shape =</span> Sex, <span class="at">size =</span> LibrarySize)) <span class="sc">+</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"4months"</span> <span class="ot">=</span> <span class="st">"blue"</span>, <span class="st">"20months"</span> <span class="ot">=</span> <span class="st">"red"</span>)) <span class="sc">+</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Female"</span> <span class="ot">=</span> <span class="dv">16</span>, <span class="st">"Male"</span> <span class="ot">=</span> <span class="dv">17</span>)) <span class="sc">+</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"PCA Plot of Library-Size Normalized Data"</span>, </span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="fu">paste</span>(<span class="st">"PC1 (Variance:"</span>, variance_explained[<span class="dv">1</span>], <span class="st">"%)"</span>), </span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="fu">paste</span>(<span class="st">"PC2 (Variance:"</span>, variance_explained[<span class="dv">2</span>], <span class="st">"%)"</span>))</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the PCA plot for normalized data</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(pca_plot_normalized)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>})})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>For the second PCA plot, samples were first normalized to library size. If we look along the PC1 axis, which accounts for 89.92% of the variance, we see a separation again in sex, with most of the male samples clustered together on the negative side and the female samples on the positive side. Along the PC2 axis (5.39% variance), we see a stronger effect of age than in the raw read count PCA plot. where the 20-month old samples are more clustered together and the 4-month old samples are closer together. There are, however two outliers in the top right quadrant and top left quadrant, particularly the female 20-month old sample which is farther away on the PC2 axis from the other samples in that same age/sex group.</p>
+<p>The normalization of library size did seem to help group samples from one of the 4 groups closer together. Even when we ignore the outliers, there does seem to be a bit of overlap towards the middle of the plot. This may indicate some more complex interactions between age and sex that need to be investigated further.</p>
+</section>
+<section id="task-4.-differentially-expressed-genes" class="level3">
+<h3 class="anchored" data-anchor-id="task-4.-differentially-expressed-genes">Task 4. Differentially Expressed Genes</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressWarnings</span>({ <span class="fu">suppressMessages</span>({</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Assuming you have already loaded the DESeq2 library and created the DESeqDataSet object 'dds' as in Task 3.</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DESeq2)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the GLM model</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">design</span>(dds) <span class="ot">&lt;-</span> <span class="er">~</span> Age <span class="sc">+</span> Sex <span class="sc">+</span> Age<span class="sc">:</span>Sex</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>dds <span class="ot">&lt;-</span> <span class="fu">DESeq</span>(dds)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># To extract results for each effect, you can use the following contrasts:</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Aging effect</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>results_age0 <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">contrast=</span><span class="fu">c</span>(<span class="st">"Age"</span>, <span class="st">"20months"</span>, <span class="st">"4months"</span>))</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Sex effect</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>results_sex0 <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">contrast=</span><span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span>))</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Age-Sex intersection</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>results_interaction0 <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">name =</span> <span class="st">"Age4months.SexMale"</span>)    </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>})})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>results_age0<span class="sc">$</span>Gene <span class="ot">&lt;-</span> raw_count_data0<span class="sc">$</span>Gene</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>results_sex0<span class="sc">$</span>Gene <span class="ot">&lt;-</span> raw_count_data0<span class="sc">$</span>Gene</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>results_interaction0<span class="sc">$</span>Gene <span class="ot">&lt;-</span> raw_count_data0<span class="sc">$</span>Gene</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>results_age0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age 20months vs 4months 
+Wald test p-value: Age 20months vs 4months 
+DataFrame with 56941 rows and 7 columns
+        baseMean log2FoldChange     lfcSE       stat    pvalue      padj
+       &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;
+1     2480.01099     0.00821378 0.0914856  0.0897823 0.9284602  0.978919
+2        0.24489     2.30183356 4.3224718  0.5325271 0.5943609        NA
+3      261.51434    -0.03804055 0.1593583 -0.2387107 0.8113299  0.938462
+4     1960.37691     0.45308644 0.5487639  0.8256492 0.4090031  0.731146
+5       60.17451     0.51302724 0.2797859  1.8336419 0.0667072  0.320532
+...          ...            ...       ...        ...       ...       ...
+56937    0.00000             NA        NA         NA        NA        NA
+56938    0.35343       0.705173   4.40729   0.160001   0.87288        NA
+56939    0.00000             NA        NA         NA        NA        NA
+56940    0.00000             NA        NA         NA        NA        NA
+56941    0.00000             NA        NA         NA        NA        NA
+                       Gene
+                &lt;character&gt;
+1      ENSMUSG00000000001.5
+2     ENSMUSG00000000003.16
+3     ENSMUSG00000000028.16
+4     ENSMUSG00000000031.19
+5     ENSMUSG00000000037.18
+...                     ...
+56937  ENSMUSG00002076988.1
+56938  ENSMUSG00002076989.1
+56939  ENSMUSG00002076990.1
+56940  ENSMUSG00002076991.1
+56941  ENSMUSG00002076992.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>results_sex0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Sex Male vs Female 
+Wald test p-value: Sex Male vs Female 
+DataFrame with 56941 rows and 7 columns
+        baseMean log2FoldChange     lfcSE      stat      pvalue      padj
+       &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt; &lt;numeric&gt;
+1     2480.01099     -0.0336455 0.0914548 -0.367893 0.712953257 0.9933527
+2        0.24489     -2.3538311 4.3224718 -0.544557 0.586058416        NA
+3      261.51434     -0.0195886 0.1593915 -0.122896 0.902189138 0.9983566
+4     1960.37691      0.2880053 0.5485793  0.525002 0.599581677 0.9814042
+5       60.17451     -1.0688830 0.2897637 -3.688810 0.000225306 0.0258233
+...          ...            ...       ...       ...         ...       ...
+56937    0.00000             NA        NA        NA          NA        NA
+56938    0.35343       -0.75717   4.40729 -0.171799    0.863595        NA
+56939    0.00000             NA        NA        NA          NA        NA
+56940    0.00000             NA        NA        NA          NA        NA
+56941    0.00000             NA        NA        NA          NA        NA
+                       Gene
+                &lt;character&gt;
+1      ENSMUSG00000000001.5
+2     ENSMUSG00000000003.16
+3     ENSMUSG00000000028.16
+4     ENSMUSG00000000031.19
+5     ENSMUSG00000000037.18
+...                     ...
+56937  ENSMUSG00002076988.1
+56938  ENSMUSG00002076989.1
+56939  ENSMUSG00002076990.1
+56940  ENSMUSG00002076991.1
+56941  ENSMUSG00002076992.1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>results_interaction0</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age4months.SexMale 
+Wald test p-value: Age4months.SexMale 
+DataFrame with 56941 rows and 7 columns
+        baseMean log2FoldChange     lfcSE      stat      pvalue      padj
+       &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt; &lt;numeric&gt;
+1     2480.01099     -0.0192955  0.129398 -0.149118 0.881460773 0.9739582
+2        0.24489      2.0996859  6.173097  0.340135 0.733754925        NA
+3      261.51434     -0.0539806  0.225514 -0.239367 0.810821328 0.9552149
+4     1960.37691     -0.4750037  0.776044 -0.612084 0.540482429 0.8620503
+5       60.17451      1.3469929  0.404531  3.329767 0.000869186 0.0682513
+...          ...            ...       ...       ...         ...       ...
+56937    0.00000             NA        NA        NA          NA        NA
+56938    0.35343        3.14743   6.16982  0.510133    0.609958        NA
+56939    0.00000             NA        NA        NA          NA        NA
+56940    0.00000             NA        NA        NA          NA        NA
+56941    0.00000             NA        NA        NA          NA        NA
+                       Gene
+                &lt;character&gt;
+1      ENSMUSG00000000001.5
+2     ENSMUSG00000000003.16
+3     ENSMUSG00000000028.16
+4     ENSMUSG00000000031.19
+5     ENSMUSG00000000037.18
+...                     ...
+56937  ENSMUSG00002076988.1
+56938  ENSMUSG00002076989.1
+56939  ENSMUSG00002076990.1
+56940  ENSMUSG00002076991.1
+56941  ENSMUSG00002076992.1</code></pre>
+</div>
+</div>
+</section>
+<section id="task-5.-top-differentially-expressed-genes-for-each-effect" class="level3">
+<h3 class="anchored" data-anchor-id="task-5.-top-differentially-expressed-genes-for-each-effect">Task 5. Top Differentially Expressed Genes for Each Effect</h3>
+<p>Differentially expressed genes (DEGs) were determined for each of the three effects:</p>
+<ul>
+<li><p>aging effect</p></li>
+<li><p>sex effect</p></li>
+<li><p>aging and sex interaction effect</p></li>
+</ul>
+<p>DEGs were filtered at a specific FDR threshold of 0.05, in order to capture the most significant genes while minimizing the possibility of false positives, and report the total number of DEGs for each effect. After filtering, we report and visualize the top 5 DEGs for each effect according to padj values in addition to the top 5 DEGs according to log fold change.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform differential expression analysis for aging effect</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>results_age <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">contrast =</span> <span class="fu">c</span>(<span class="st">"Age"</span>, <span class="st">"20months"</span>, <span class="st">"4months"</span>))</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform differential expression analysis for sex effect</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>results_sex <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">contrast =</span> <span class="fu">c</span>(<span class="st">"Sex"</span>, <span class="st">"Male"</span>, <span class="st">"Female"</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Perform differential expression analysis for aging and sex interaction effect</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>results_interaction <span class="ot">&lt;-</span> <span class="fu">results</span>(dds, <span class="at">name =</span> <span class="st">"Age4months.SexMale"</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter DEGs at a specified FDR threshold (e.g., 0.05)</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>results_age <span class="ot">&lt;-</span> results_age0[<span class="fu">which</span>(results_age<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span>), ]</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>results_sex <span class="ot">&lt;-</span> results_sex0[<span class="fu">which</span>(results_sex<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span>), ]</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>results_interaction <span class="ot">&lt;-</span> results_interaction0[<span class="fu">which</span>(results_interaction<span class="sc">$</span>padj <span class="sc">&lt;</span> <span class="fl">0.05</span>), ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Total number of DEGs for each effect</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>total_DEGs_age <span class="ot">&lt;-</span> <span class="fu">nrow</span>(results_age)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>total_DEGs_sex <span class="ot">&lt;-</span> <span class="fu">nrow</span>(results_sex)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>total_DEGs_interaction <span class="ot">&lt;-</span> <span class="fu">nrow</span>(results_interaction)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total DEGs for Aging Effect (FDR &lt; 0.05):"</span>, total_DEGs_age, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total DEGs for Aging Effect (FDR &lt; 0.05): 1123 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total DEGs for Sex Effect (FDR &lt; 0.05):"</span>, total_DEGs_sex, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total DEGs for Sex Effect (FDR &lt; 0.05): 226 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"Total DEGs for Interaction Effect (FDR &lt; 0.05):"</span>, total_DEGs_interaction, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Total DEGs for Interaction Effect (FDR &lt; 0.05): 169 </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the top five genes for each effect</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>top_genes_age <span class="ot">&lt;-</span> <span class="fu">head</span>(results_age[<span class="fu">order</span>(results_age<span class="sc">$</span>padj), ], <span class="dv">5</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>top_genes_sex <span class="ot">&lt;-</span> <span class="fu">head</span>(results_sex[<span class="fu">order</span>(results_sex<span class="sc">$</span>padj), ], <span class="dv">5</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>top_genes_interaction <span class="ot">&lt;-</span> <span class="fu">head</span>(results_interaction[<span class="fu">order</span>(results_interaction<span class="sc">$</span>padj), ], <span class="dv">5</span>)</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the top genes</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Aging Effect by Padj Value:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Aging Effect by Padj Value:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age 20months vs 4months 
+Wald test p-value: Age 20months vs 4months 
+DataFrame with 5 rows and 7 columns
+   baseMean log2FoldChange     lfcSE      stat      pvalue        padj
+  &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
+1  4111.019        1.84080 0.1233708   14.9208 2.41217e-50 4.58410e-46
+2  1087.596        1.65658 0.1164067   14.2309 5.88951e-46 5.59621e-42
+3   810.023        2.55106 0.1825740   13.9727 2.28696e-44 1.44871e-40
+4   885.180        2.58078 0.2135463   12.0853 1.26276e-33 5.99939e-30
+5  1402.395        1.08500 0.0984462   11.0212 3.01848e-28 1.14726e-24
+                   Gene
+            &lt;character&gt;
+1 ENSMUSG00000030862.14
+2  ENSMUSG00000029330.9
+3  ENSMUSG00000076612.9
+4  ENSMUSG00000055489.9
+5 ENSMUSG00000020333.18</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Sex Effect by Padj Value:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Sex Effect by Padj Value:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Sex Male vs Female 
+Wald test p-value: Sex Male vs Female 
+DataFrame with 5 rows and 7 columns
+   baseMean log2FoldChange     lfcSE      stat       pvalue         padj
+  &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;
+1  3901.163      10.604692 0.3693884   28.7088 2.96397e-181 5.19762e-177
+2 17037.623      -9.274049 0.5394103  -17.1929  2.99931e-66  2.62979e-62
+3   978.931      10.264820 0.6540370   15.6946  1.64791e-55  9.63257e-52
+4   889.610      10.203241 0.6525122   15.6369  4.08376e-55  1.79032e-51
+5 20213.566      -0.648096 0.0589987  -10.9849  4.51610e-28  1.58389e-24
+                   Gene
+            &lt;character&gt;
+1 ENSMUSG00000069045.12
+2  ENSMUSG00000086503.5
+3 ENSMUSG00000068457.15
+4 ENSMUSG00000056673.15
+5 ENSMUSG00000000787.13</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Interaction Effect by Padj Value:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Interaction Effect by Padj Value:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_interaction)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age4months.SexMale 
+Wald test p-value: Age4months.SexMale 
+DataFrame with 5 rows and 7 columns
+   baseMean log2FoldChange     lfcSE      stat      pvalue        padj
+  &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
+1   6379.92       1.761479  0.199260   8.84008 9.56468e-19 1.60715e-14
+2   4111.02       1.365050  0.174020   7.84423 4.35627e-15 3.65992e-11
+3   1776.96      -1.067360  0.173955  -6.13585 8.47029e-10 3.55816e-06
+4   8675.64      -0.872903  0.141782  -6.15667 7.42887e-10 3.55816e-06
+5   1402.40       0.822589  0.136732   6.01605 1.78722e-09 5.90241e-06
+                   Gene
+            &lt;character&gt;
+1 ENSMUSG00000022797.17
+2 ENSMUSG00000030862.14
+3 ENSMUSG00000030889.15
+4 ENSMUSG00000040283.15
+5 ENSMUSG00000020333.18</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pheatmap)</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the top gene names for each effect</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>top_gene_names_age <span class="ot">&lt;-</span> top_genes_age<span class="sc">$</span>Gene</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>top_gene_names_sex <span class="ot">&lt;-</span> top_genes_sex<span class="sc">$</span>Gene</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>top_gene_names_interaction <span class="ot">&lt;-</span> top_genes_interaction<span class="sc">$</span>Gene</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the raw count data for the top genes</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>top_gene_counts_age <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_age, ]</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>top_gene_counts_sex <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_sex, ]</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>top_gene_counts_interaction <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_interaction, ]</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>plot_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(top_gene_counts, effect_name) {</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a>  gene_names <span class="ot">&lt;-</span> top_gene_counts<span class="sc">$</span>Gene</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>  top_gene_counts <span class="ot">&lt;-</span> top_gene_counts[, <span class="sc">-</span><span class="dv">1</span>]  <span class="co"># Exclude the 'Gene' column</span></span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pheatmap</span>(<span class="fu">as.matrix</span>(top_gene_counts),</span>
+<span id="cb37-19"><a href="#cb37-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Top Genes for"</span>, effect_name),</span>
+<span id="cb37-20"><a href="#cb37-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"red"</span>))(<span class="dv">100</span>),</span>
+<span id="cb37-21"><a href="#cb37-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">fontsize_row =</span> <span class="dv">8</span>,</span>
+<span id="cb37-22"><a href="#cb37-22" aria-hidden="true" tabindex="-1"></a>           <span class="at">labels_row =</span> gene_names)</span>
+<span id="cb37-23"><a href="#cb37-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-24"><a href="#cb37-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the heatmaps for each effect</span></span>
+<span id="cb37-26"><a href="#cb37-26" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_age, <span class="st">"Aging Effect by Padj Value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_sex, <span class="st">"Sex Effect by Padj Value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_interaction, <span class="st">"Interaction Effect by Padj Value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualize the top five genes for each effect</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>top_genes_age_by_lfc <span class="ot">&lt;-</span> <span class="fu">tail</span>(results_age[<span class="fu">order</span>(<span class="fu">abs</span>(results_age<span class="sc">$</span>log2FoldChange)), ], <span class="dv">5</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>top_genes_sex_by_lfc <span class="ot">&lt;-</span> <span class="fu">tail</span>(results_sex[<span class="fu">order</span>(<span class="fu">abs</span>(results_sex<span class="sc">$</span>log2FoldChange)), ], <span class="dv">5</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>top_genes_interaction_by_lfc <span class="ot">&lt;-</span> <span class="fu">tail</span>(results_interaction[<span class="fu">order</span>(<span class="fu">abs</span>(results_interaction<span class="sc">$</span>log2FoldChange)), ], <span class="dv">5</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the top genes</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Aging Effect by LogFoldChange:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Aging Effect by LogFoldChange:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_age_by_lfc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age 20months vs 4months 
+Wald test p-value: Age 20months vs 4months 
+DataFrame with 5 rows and 7 columns
+         baseMean log2FoldChange     lfcSE      stat      pvalue        padj
+        &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;   &lt;numeric&gt;
+[1119,]   19.0642        4.12404  1.085598   3.79887 1.45358e-04 6.16604e-03
+[1120,]   21.8223        4.19087  0.818920   5.11756 3.09512e-07 4.20141e-05
+[1121,]   45.0573        4.32299  0.626819   6.89671 5.32206e-12 2.46684e-09
+[1122,]   11.4374        5.33078  1.144668   4.65705 3.20773e-06 3.17499e-04
+[1123,]   59.4314        5.59113  0.753113   7.42402 1.13614e-13 6.98023e-11
+                         Gene
+                  &lt;character&gt;
+[1119,]  ENSMUSG00000030046.7
+[1120,]  ENSMUSG00000035186.7
+[1121,]  ENSMUSG00000031495.9
+[1122,]  ENSMUSG00000079190.4
+[1123,] ENSMUSG00000045967.12</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Sex Effect by LogFoldChange:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Sex Effect by LogFoldChange:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_sex_by_lfc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Sex Male vs Female 
+Wald test p-value: Sex Male vs Female 
+DataFrame with 5 rows and 7 columns
+        baseMean log2FoldChange     lfcSE      stat       pvalue         padj
+       &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;    &lt;numeric&gt;    &lt;numeric&gt;
+[222,] 17037.623       -9.27405  0.539410  -17.1929  2.99931e-66  2.62979e-62
+[223,]  2770.231        9.60106  0.903105   10.6312  2.13416e-26  5.34638e-23
+[224,]   889.610       10.20324  0.652512   15.6369  4.08376e-55  1.79032e-51
+[225,]   978.931       10.26482  0.654037   15.6946  1.64791e-55  9.63257e-52
+[226,]  3901.163       10.60469  0.369388   28.7088 2.96397e-181 5.19762e-177
+                        Gene
+                 &lt;character&gt;
+[222,]  ENSMUSG00000086503.5
+[223,] ENSMUSG00000069049.12
+[224,] ENSMUSG00000056673.15
+[225,] ENSMUSG00000068457.15
+[226,] ENSMUSG00000069045.12</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n</span><span class="st">Top 5 DEGs for Interaction Effect by LogFoldChange:</span><span class="sc">\n</span><span class="st">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Top 5 DEGs for Interaction Effect by LogFoldChange:</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(top_genes_interaction_by_lfc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>log2 fold change (MLE): Age4months.SexMale 
+Wald test p-value: Age4months.SexMale 
+DataFrame with 5 rows and 7 columns
+        baseMean log2FoldChange     lfcSE      stat      pvalue       padj
+       &lt;numeric&gt;      &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;
+[165,]   27.6958       -2.33410  0.603821  -3.86556 1.10836e-04 0.02165547
+[166,]   24.4364       -2.38619  0.671209  -3.55507 3.77882e-04 0.04338215
+[167,]   39.1245        2.77873  0.797271   3.48530 4.91590e-04 0.04946224
+[168,]   55.2375        2.94676  0.707904   4.16266 3.14565e-05 0.00980887
+[169,]   59.4314        3.84820  0.928571   4.14422 3.40979e-05 0.00980887
+                        Gene
+                 &lt;character&gt;
+[165,]  ENSMUSG00000050359.8
+[166,]  ENSMUSG00000114771.2
+[167,] ENSMUSG00000055333.15
+[168,] ENSMUSG00000039913.13
+[169,] ENSMUSG00000045967.12</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required libraries</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pheatmap)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the top gene names for each effect</span></span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>top_gene_names_age_by_lfc <span class="ot">&lt;-</span> top_genes_age_by_lfc<span class="sc">$</span>Gene</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>top_gene_names_sex_by_lfc <span class="ot">&lt;-</span> top_genes_sex_by_lfc<span class="sc">$</span>Gene</span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>top_gene_names_interaction_by_lfc <span class="ot">&lt;-</span> top_genes_interaction_by_lfc<span class="sc">$</span>Gene</span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter the raw count data for the top genes</span></span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>top_gene_counts_age_by_lfc <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_age_by_lfc, ]</span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>top_gene_counts_sex_by_lfc <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_sex_by_lfc, ]</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>top_gene_counts_interaction_by_lfc <span class="ot">&lt;-</span> raw_count_data0[raw_count_data0<span class="sc">$</span>Gene <span class="sc">%in%</span> top_gene_names_interaction_by_lfc, ]</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>plot_heatmap <span class="ot">&lt;-</span> <span class="cf">function</span>(top_gene_counts_by_lfc, effect_name) {</span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>  gene_names <span class="ot">&lt;-</span> top_gene_counts_by_lfc<span class="sc">$</span>Gene</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>  top_gene_counts_by_lfc <span class="ot">&lt;-</span> top_gene_counts_by_lfc[, <span class="sc">-</span><span class="dv">1</span>]  <span class="co"># Exclude the 'Gene' column</span></span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pheatmap</span>(<span class="fu">as.matrix</span>(top_gene_counts_by_lfc),</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>           <span class="at">main =</span> <span class="fu">paste</span>(<span class="st">"Top Genes for"</span>, effect_name),</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="fu">colorRampPalette</span>(<span class="fu">c</span>(<span class="st">"blue"</span>, <span class="st">"white"</span>, <span class="st">"red"</span>))(<span class="dv">100</span>),</span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>           <span class="at">fontsize_row =</span> <span class="dv">8</span>,</span>
+<span id="cb52-22"><a href="#cb52-22" aria-hidden="true" tabindex="-1"></a>           <span class="at">labels_row =</span> gene_names)</span>
+<span id="cb52-23"><a href="#cb52-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb52-24"><a href="#cb52-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb52-25"><a href="#cb52-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the heatmaps for each effect</span></span>
+<span id="cb52-26"><a href="#cb52-26" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_age_by_lfc, <span class="st">"Aging Effect by LogFoldChange"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_sex_by_lfc, <span class="st">"Sex Effect by LogFoldChange"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_heatmap</span>(top_gene_counts_interaction_by_lfc, <span class="st">"Interaction Effect by LogFoldChange"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="CS509_Project2_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>Top DEGs for Each Effect</strong></p>
+<p>Here is a review of the results from the top DGEs and we would like to note that we go into more detail about the biological implications in the Extra Credit Task E1.</p>
+<p>AGE</p>
+<p>According to the dendrogram plotted along with the heatmap according to padj value, the male samples are clustered together, including a branch for the younger female samples. The older female sample shows very high expression of Cpxm2 (ENSMUSG00000030862.14) carboxypeptidase X, which is involved with peptide metabolic processes. Since we do not see the same level of expression in the older male samples, it seems there may be evidence of underlying sex-age interaction. Overall, many of the genes are involved in signaling, structure, and metabolic processes, which we would expect to be affected by age.</p>
+<p>SEX</p>
+<p>The heatmap clusters clearly into two groups, male and female, and as expected. All of these genes are found to be linked to either the X chromosome (Xist, Ddx3x) or Y chromosome (Ddx3y, Ulty, Kdm5d) according to the gene database and are expressed accordingly to sex in the data. In addition to ‘participat[ing] in known sex-determination’ according to the paper, many of these genes also function in the processes of transcription and chromatin remodeling (Han et al 2022). This indicates an underlying difference in transcription regulation between the sexes.</p>
+<p>SEX-AGE INTERACTION</p>
+<p>Similar to what was found by the original authors, we found several cardiac genes in our top DEGs that seem to demonstrate a sex-age interaction, where <em>Cpxm2</em> and <em>Tfrc</em> have a negative sex-age interaction (Han et al 2022). Some of these genes appear to also function in homestasis and immune processes, indicating an underlying difference in aging between the sexes.</p>
+</section>
+<section id="extra-credit-task-e1---interpretation-of-top-genes" class="level3">
+<h3 class="anchored" data-anchor-id="extra-credit-task-e1---interpretation-of-top-genes">Extra Credit Task E1 - Interpretation of top genes</h3>
+<p>The tables below summarize our top five DEGs for each effect according to either the padj value or the log-fold change value. Common genes between our results and those discovered by the authors of the original project are highlighted in blue (Han et al 2022).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide1.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Sex Effect by Padj Value</strong></figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide2.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Aging Effect by Padj Value</strong></figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide3.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Age-Sex Interaction Effect by Padj Value</strong></figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide4.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Sex Effect by Log-fold Change Value</strong></figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide5.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Aging Effect by Log-fold Change Value</strong></figcaption>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="Top%205%20DEGs/Slide6.JPG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Top 5 DEGs for Sex-Age Interaction Effect by Log-fold Change Value</strong></figcaption>
+</figure>
+</div>
+<p><strong>E1.1 Comparison of Top DEGs to Paper</strong></p>
+<p>When we compare out top DEGs for each effect to the original project paper, we find that our results are consistent with the findings of the author. For each of the three effects, whether by padj or log-fold change, we had at least 1 top gene in common that was mentioned specifically in the paper.</p>
+<p><strong>E1.2 Biological Interpretation</strong></p>
+<p>In order to determine a wider overview of the biological processes that our top DEGs are involved in, we determine the Gene Onotology (GO) terms using the Generic Gene Ontology Term Mapper (Lewis-Sigler Institute for Integrative Genomics, Princeton University). The top 5 DEGs sorted by padj value and log-fold change value were combined in order to capture more terms.</p>
+<p>AGE</p>
+<p>When we combine the top 5 DEGs by Age Effect by padj and logfold change values, the gene ontology (GO) terms include cell differentiation, anatomical structure development, defense response, immune response, signaling, transport, and metabolic processes. This is consistent with the paper, where they say “that sex-differential genes appear to primarily cluster around metabolic pathways” (Han et al 2022).</p>
+<p>It is also important to consider that many genes function in multiple pathways, for example, Bmp10 (bone morphogenetic protein-10) sounds out of place in the heart. In fact, it has been found to be critical for cardiomyocyte proliferation (Sun et al 2014), a process that is necessary for cardiac repair after stress or injury and likely becomes less robust as age increases.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GO_age_padj.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">GO Terms for Age Effect (Top Padj and Logfold Change</figcaption>
+</figure>
+</div>
+<p>SEX</p>
+<p>As expected, all of the DEGs determined for the effect of sex are linked to either the X or Y chromosome. The gene ontology (GO) terms include reproductive process, cell differentiation, chromatin organization, regulation of DNA-templeted transcription, immune processes, etc. These results indicate that the regulation of transcription differs between the sexes, which subsequently affects cell signaling pathways. There may be differences in the immune system reactions as well, which complicates the study of aging-related diseases.</p>
+<p>In relation to heart disease, there are many sex-realted differences in the diagnosis and treatment of disease. One study found that “heart failure disproportionately contributes to coronary heart disease mortality in women, potentially due to undiagnosed ischaemic heart disease in women. The strength of the association with cardiovascular risk factors differ by sex.” (Snyder et al 2014). There are also differences in treatments for cardiac failure, where “evidence suggests that optimal survival in women occurs with lower doses of β blockers, angiotensin receptor blockers, and angiotensin converting enzyme inhibitors than in men” (Santema et al 2019).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GO_sex_padj.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>Go Terms for Sex Effect (Top Padj and Logfold Changes)</strong></figcaption>
+</figure>
+</div>
+<p>AGE-SEX INTERACTION</p>
+<p>Our model explores not only the effects of age and sex on cardiac gene expression but also the possible interactions of age and sex. Due to the underlying differences between the transcriptomes of the two sexes, the expression of genes related to aging seems to be affected by sex.</p>
+<p>The gene ontology (GO) terms include signaling, anatomical structure development, cell differentiation, immune system process, nervous system processes cell adhesion, programmed cell death, etc.</p>
+<p>Interestingly, the cardiac gene <em>Tfrc</em> is critical to heart function by promoting iron uptake. In a recent paper, the researchers found that this gene also participates in immune processes by promoting macrophage infiltration (Pan et al 2023). This example demonstrates the hidden complexity of gene function and interactions, which may not be apparent without more research into specific genes.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="GO_age_sex_padj.jpg" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption"><strong>GO Terms for Age-Sex Interaction (Top Padj and Log-Fold Change)</strong></figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="data-source" class="level2">
+<h2 class="anchored" data-anchor-id="data-source">Data Source</h2>
+<p><strong>Mouse Reference Genome - GRCm39</strong></p>
+<p><a href="https://www.gencodegenes.org/mouse/" class="uri">https://www.gencodegenes.org/mouse/</a></p>
+<p><strong>GENCODE Mouse Genome Annotation (release M33)</strong></p>
+<p><a href="https://www.gencodegenes.org/mouse/" class="uri">https://www.gencodegenes.org/mouse/</a></p>
+<p><strong>NCBI GEO Sequencing Files - GSE202384</strong></p>
+<p><a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE202384" class="uri">https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE202384</a></p>
+</section>
+<section id="methods" class="level2">
+<h2 class="anchored" data-anchor-id="methods">Methods</h2>
+<p><strong>Software</strong></p>
+<p>R Studio Version 4.2.2</p>
+<p><a href="https://www.r-project.org/" class="uri">https://www.r-project.org/</a></p>
+<p>SRA Toolkit</p>
+<p><a href="https://hpc.nih.gov/apps/sratoolkit.html" class="uri">https://hpc.nih.gov/apps/sratoolkit.html</a></p>
+<p>STAR (Spliced Transcript Alignment to a Reference) Version 2.7.11a</p>
+<p><a href="https://github.com/alexdobin/STAR/releases/download/2.7.11a/STAR_2.7.11a.zip" class="uri">https://github.com/alexdobin/STAR/releases/download/2.7.11a/STAR_2.7.11a.zip</a></p>
+<p>HTSeq (High-throughput sequence analysis in Python) Version 2.0.4</p>
+<p><a href="https://htseq.readthedocs.io/en/latest/" class="uri">https://htseq.readthedocs.io/en/latest/</a></p>
+<p><strong>RNA-seq data download, assembly, and read counting</strong></p>
+<p>The initial steps of this project were accomplished via the command line using Linux. First, the SRA toolkit was used to download the fastq sequence data from the experiment from NCBI GEO. STAR was then used to build an index from the mouse genome and annotation files to generate the BAM and junction files. HTseq was then used to obtain the raw read counts for each annotated gene. We have included the code below.</p>
+<p><strong>Step 1.1</strong> We installed the SRA Toolkit to download sequence data from NIH Sequence Read Archive (SRA).</p>
+<p><strong>Step 1.2</strong> We downloaded the meta file <em>PRJNA835826-meta.csv</em>providing all information about the 12 libraries.</p>
+<p><strong>Step 1.3</strong></p>
+<p>We download the data from NCBI SRA as sra files with the following commands.</p>
+<p>prefetch SRR19123213 --verbose<br>
+prefetch SRR19123214 --verbose<br>
+prefetch SRR19123215 --verbose<br>
+prefetch SRR19123216 --verbose<br>
+prefetch SRR19123217 --verbose<br>
+prefetch SRR19123218 --verbose<br>
+prefetch SRR19123219 --verbose<br>
+prefetch SRR19123220 --verbose<br>
+prefetch SRR19123221 --verbose<br>
+prefetch SRR19123222 --verbose<br>
+prefetch SRR19123223 --verbose<br>
+prefetch SRR19123224 --verbose</p>
+<p>Then, we converted the sra files to two fastq files for each sample with the following commands.</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123213</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123214</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123215</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123216</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123217</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123218</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123219</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123220</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123221</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123222</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123223</p>
+<p>fasterq-dump --threads 12 --verbose SRR19123224</p>
+<p><strong>Step 1.4</strong> We installed STAR aligner.</p>
+<p><strong>Step 1.5</strong> Then, we built STAR genome index for the mouse reference genome and annotation (GRCm39) with the following command.</p>
+<p>STAR --runThreadN 12 --runMode genomeGenerate --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --genomeFastaFiles /home/student_no_backup/ibhat/P2/GRCm39.primary_assembly.genome.fa --sjdbGTFfile /home/student_no_backup/ibhat/P2/gencode.vM33.primary_assembly.basic.annotation.gtf</p>
+<p><strong>Step 1.6</strong> We run STAR on the libraries to generate BAM and junction usage files with the following commands.</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123213_1.fastq SRR19123213_2.fastq --outFileNamePrefix SRR19123213_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123214_1.fastq SRR19123214_2.fastq --outFileNamePrefix SRR19123214_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123215_1.fastq SRR19123215_2.fastq --outFileNamePrefix SRR19123215_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123216_1.fastq SRR19123216_2.fastq --outFileNamePrefix SRR19123216_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123217_1.fastq SRR19123217_2.fastq --outFileNamePrefix SRR19123217_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123218_1.fastq SRR19123218_2.fastq --outFileNamePrefix SRR19123218_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123219_1.fastq SRR19123219_2.fastq --outFileNamePrefix SRR19123219_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123220_1.fastq SRR19123220_2.fastq --outFileNamePrefix SRR19123220_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123221_1.fastq SRR19123221_2.fastq --outFileNamePrefix SRR19123221_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123222_1.fastq SRR19123222_2.fastq --outFileNamePrefix SRR19123222_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123223_1.fastq SRR19123223_2.fastq --outFileNamePrefix SRR19123223_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p>STAR --runThreadN 12 --genomeDir /home/student_no_backup/ibhat/P2/STAR_index/ --readFilesIn SRR19123224_1.fastq SRR19123224_2.fastq --outFileNamePrefix SRR19123224_ --outSAMtype BAM SortedByCoordinate --quantMode GeneCounts</p>
+<p><strong>Step 1.7</strong> Next, we installed HTSeq.</p>
+<p><strong>Step 1.8</strong> Finally, using htseq-count from HTSeq, we obtained read counts for each annotated gene with the following commands.</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123213_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123213.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123214_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123214.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123215_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123215.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123216_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123216.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123217_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123217.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123218_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123218.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123219_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123219.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123220_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123220.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123221_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123221.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123222_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf &nbsp;&gt;&nbsp; raw_read_counts_SRR19123222.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123223_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123223.txt</p>
+<p>htseq-count -f bam -r pos -s no -i gene_id SRR19123224_Aligned.sortedByCoord.out.bam gencode.vM33.primary_assembly.basic.annotation.gtf&nbsp; &gt;&nbsp; raw_read_counts_SRR19123224.txt</p>
+<p><strong>PCA Plots: Raw Reads and Normalized to Library</strong></p>
+<p>The raw read counts generated from the previous step were then organized into a count matrix and used to make create the ‘Raw Read PCA Plot’. Using DESeq2, the reads were then normalized to library-size and plotted again for comparison.</p>
+<p><strong>Differentially Expressed Genes</strong></p>
+<p>Using DESeq2, we apply a GLM model with a negative binomial distribution to the data in order to determine differentially expressed genes (DEGs) in the context of our experimental factors. We chose model 3, in order to determine the effects of age or sex on gene expression, as well as the effects of the interaction between age and sex.</p>
+<p>~ Age + Sex + Age:Sex</p>
+<p>The Top 5 DEgs, by either padj value or log-fold change value) were plotted as heatmaps with accompanying dendrograms to show expression levels of the top genes, as well as the overall similarity in expression profiles.</p>
+</section>
+<section id="discussion" class="level2">
+<h2 class="anchored" data-anchor-id="discussion">Discussion</h2>
+<p>RESULT SUMMARY</p>
+<p>Sex represents an intrinsic biological factor that has been shown to be critical to our understanding of disease and aging. The underlying baseline gene expression profiles differ due to the inheritance of different sex chromosomes in males and females. Sex represents a confounding factor that must be accounted for in experimental design, even if that is not the variable of interest. In order to address questions of the effect of age and sex on gene expression in the mouse heart, we utilize the public data set published by the original authors of the study (Han et al 2022).</p>
+<p>We calculated the total number of DEGs for each effect (FDR &lt; 0.05) as follows:</p>
+<table class="table">
+<caption><strong>Total Number DEGs for each effect</strong></caption>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Effect</th>
+<th style="text-align: center;">Total DEGs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">Age</td>
+<td style="text-align: center;">1123</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Sex</td>
+<td style="text-align: center;">223</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Age-Sex Interaction</td>
+<td style="text-align: center;">169</td>
+</tr>
+</tbody>
+</table>
+<p>Our overall results concur with the original paper, that sexual dimorphism and the underlying genetic differences influence subsequent molecular interactions and biological processes. While the top DEGs between age groups were associated with sex chromosomes (X or Y) and reproductive processes as expected, they also participated in transcription regulation and chromatin organization. These results reflect inherent differences in transcriptional processes between the sexes that produce different molecular landscapes for other biological processes, such as age, to act upon.</p>
+<p>In terms of aging effect, many of the top DEGs were involved in cell homeostasis, metabolism, structure development, transport and signaling. Both the original authors results and ours confirm <em>Cd209d</em> as a DEG in older hearts, which functions as a receptor on macrophages and dendritic cells to recognize infectious agents. Another study shows that many of the DEGs in aging hearts are related to immune reactions and often upgregulated due to high protein turnover due to cellular damage (Bartling et al 2019).</p>
+<p>While the effects of age or sex on gene expression seem clear, there appears to be a more complex effect of the interaction of these two factors. In terms of log-fold change, we see cardiac genes <em>Tfrc</em> and <em>Sprr1a</em> differentially expressed within the two age groups and the two sexes. Pak5 and Gpr158 were found to be upregulated in older hearts, which is interesting as members of the PAK family have been implicated in many age-related diseases (Amirthalingam et al 2021). Gpr158 represents a g-coupled protein receptor that is involved in pathways related to age-related memory loss (Kosmidis et al 2018).</p>
+<p>Sexual dimorphisms are well known to be present in many cardiac diseases, in fact a study comparing mRNA microarray data of mouse and human heart tissue found that “sexually dimorphic genes overrepresented gene ontologies (GOs) important for cardiac homeostasis” (Tsuji et al 2020). These results highlight how crucially important sex-bias studies are to the progression of medical research. Treatments for disease that may be successful in one sex, may not be as effective in the other due to the fundamental differences in their gene expression profiles. A variety of biological factors can influence treatment efficacy, such as weight. Many drug doses are not standard per person, but determined based on patient weight to ensure efficacy.</p>
+<p>In the field of cancer therapy, tumor biopsy samples from patients are often collected to determine their expression profile through molecular techniques, such as sequencing or visualization with known markers, which can influence the treatments that they may be amenable to. In the same way, understanding the molecular differences due to any biological factor, such as sex, can better direct research to develop therapies that are effective in as many people as possible.</p>
+<p>CHALLENGES</p>
+<p>One of the significant challenges of this work was storage space, as downloading the RNA-seq files and processing them through STAR requires an enormous amount of storage space. To solve this problem, we decided to utilize the computers on campus through the Computer Science Department. Storage was still an issue, which resulted in a slight change in workflow, downloading and processing individual files and then deleting them before starting on the next file.</p>
+<p>FURTHER QUESTIONS</p>
+<p>In order to delve further into the question of aging, it may be interesting to look specifically into energy metabolism and mitochondrial genes, as well as those involved in oxidative stress. Mitochondria are the main contributor of Reactive Oxygen Species (ROS), through the use of the electron transport chain, which can cause physical DNA damage (Cui et al 2012). ROS is produced through normal cellular functions, but can also be induced by environmental stress, such as radiation or UV. We may gain some more insight into the aging process between the sexes by narrowing focus to these pathways.</p>
+</section>
+<section id="distribution-of-work" class="level2">
+<h2 class="anchored" data-anchor-id="distribution-of-work">Distribution of Work</h2>
+<p>Indronil Bhattacharjee (IB) and Erica Flores (EF) both contributed to the project. IB provided the coding for data analysis and produced the outputs and figures. EF wrote the report, providing some more biological context for the results.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>Han, Yu, Sara A Wennersten, Julianna M Wright, R W Ludwig, Edward Lau, and Maggie P Y Lam. 2022.&nbsp;“Proteogenomics Reveals Sex-Biased Aging Genes and Coordinated Splicing in Cardiac Aging.”&nbsp;<em>Am J Physiol Heart Circ Physiol</em>&nbsp;323 (3): H538–58.&nbsp;<a href="https://doi.org/10.1152/ajpheart.00244.2022" class="uri">https://doi.org/10.1152/ajpheart.00244.2022</a>.</p>
+<p>Tower J. Sex-Specific Gene Expression and Life Span Regulation. Trends Endocrinol Metab. 2017 Oct;28(10):735-747. doi: 10.1016/j.tem.2017.07.002. Epub 2017 Aug 2. PMID: 28780002; PMCID: PMC5667568. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5667568/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5667568/</a></p>
+<p>National Center for Health Statistics. <a href="https://wonder.cdc.gov/mcd.html">Multiple Cause of Death 2018–2021 on CDC WONDER Database</a>. Accessed February 2, 2023.</p>
+<p>Pan Y, Yang J, Dai J, Xu X, Zhou X, Mao W. TFRC in cardiomyocytes promotes macrophage infiltration and activation during the process of heart failure through regulating Ccl2 expression mediated by hypoxia inducible factor-1α. Immun Inflamm Dis. 2023 Aug;11(8):e835. doi: 10.1002/iid3.835. PMID: 37647427; PMCID: PMC10461419. <a href="https://pubmed.ncbi.nlm.nih.gov/37647427/" class="uri">https://pubmed.ncbi.nlm.nih.gov/37647427/</a></p>
+<p>Cui H, Kong Y, Zhang H. Oxidative stress, mitochondrial dysfunction, and aging. J Signal Transduct. 2012;2012:646354. doi: 10.1155/2012/646354. Epub 2011 Oct 2. PMID: 21977319; PMCID: PMC3184498. <a href="https://pubmed.ncbi.nlm.nih.gov/21977319/" class="uri">https://pubmed.ncbi.nlm.nih.gov/21977319/</a></p>
+<p>21 Feb 2020: Tsuji M, Kawasaki T, Matsuda T, Arai T, Gojo S, et al.&nbsp;(2020) Correction: Sexual dimorphisms of mRNA and miRNA in human/murine heart disease. PLOS ONE 15(2): e0229750. <a href="https://doi.org/10.1371/journal.pone.0229750" class="uri">https://doi.org/10.1371/journal.pone.0229750</a></p>
+<p>Babett Bartling, Katja Niemann, Rainer U. Pliquett, Hendrik Treede, Andreas Simm, Altered gene expression pattern indicates the differential regulation of the immune response system as an important factor in cardiac aging, Experimental Gerontology, Volume 117, 2019, Pages 13-20, ISSN 0531-5565, <a href="https://doi.org/10.1016/j.exger.2018.05.001." class="uri">https://doi.org/10.1016/j.exger.2018.05.001.</a> (<a href="https://www.sciencedirect.com/science/article/pii/S0531556518300950)" class="uri">https://www.sciencedirect.com/science/article/pii/S0531556518300950)</a></p>
+<p>Mohankumar Amirthalingam, Sundararaj Palanisamy, Shinkichi Tawata, p21-Activated kinase 1 (PAK1) in aging and longevity: An overview, Ageing Research Reviews, Volume 71, 2021, 101443, ISSN 1568-1637, <a href="https://doi.org/10.1016/j.arr.2021.101443." class="uri">https://doi.org/10.1016/j.arr.2021.101443.</a> (<a href="https://www.sciencedirect.com/science/article/pii/S1568163721001902)" class="uri">https://www.sciencedirect.com/science/article/pii/S1568163721001902)</a></p>
+<p>Kosmidis S, Polyzos A, Harvey L, Youssef M, Denny CA, Dranovsky A, Kandel ER. RbAp48 Protein Is a Critical Component of GPR158/OCN Signaling and Ameliorates Age-Related Memory Loss. Cell Rep.&nbsp;2018 Oct 23;25(4):959-973.e6. doi: 10.1016/j.celrep.2018.09.077. PMID: 30355501; PMCID: PMC7725275.</p>
+<p>Sun L, Yu J, Qi S, Hao Y, Liu Y, Li Z. Bone morphogenetic protein-10 induces cardiomyocyte proliferation and improves cardiac function after myocardial infarction. J Cell Biochem. 2014 Nov;115(11):1868-76. doi: 10.1002/jcb.24856. PMID: 24906204. <a href="https://pubmed.ncbi.nlm.nih.gov/24906204/" class="uri">https://pubmed.ncbi.nlm.nih.gov/24906204/</a></p>
+<p>Snyder ML , Love S-A , Sorlie PD et al.&nbsp;<strong>Redistribution of heart failure as the cause of death: the Atherosclerosis Risk in Communities Study.</strong> <em>Popul Health Metr.</em> 2014; <strong>12</strong>: 10 <a href="https://doi.org/10.1186/1478-7954-12-10">10.1186/1478-7954-12-10</a></p>
+<p>Santema BT Ouwerkerk W Tromp J et al.&nbsp;Identifying optimal doses of heart failure medications in men compared with women: a prospective, observational, cohort study. Lancet. 2019; 394: 1254-1263 <a href="https://doi.org/10.1016/S0140-6736(19)31792-1" class="uri">https://doi.org/10.1016/S0140-6736(19)31792-1</a></p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
